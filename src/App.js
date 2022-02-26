@@ -58,29 +58,30 @@ function App() {
 
   return (
     <div className="app">
+      <div className="champions">
+
       <div className="champ_choice">
         <div className="champ_left">
           <div className="champ_image">
             <img
               src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, choice1?.key)}
               alt="champion1"
-            />
+              />
           </div>
-          <div className="champion_name">{choice1?.name}</div>
-          <button>+1</button>
+          <button className="champion_name">{choice1?.name}</button>
         </div>
         <div className="champ_right">
           <div className="champ_image">
             <img
           src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, choice2?.key)}
           alt="champion2" 
-        />
+          />
           </div>
-          <div className="champion_name">{choice2?.name}</div>
-          <button>+1</button>
+          <button className="champion_name">{choice2?.name}</button>
         </div>
       </div>
-      <button onClick={() => setReload(true)}>Next</button>
+      <button className="next" onClick={() => setReload(true)}>Next</button>
+          </div>
     </div>
   );
 }
