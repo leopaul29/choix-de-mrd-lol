@@ -20,12 +20,38 @@ function App() {
   const [reload, setReload] = useState(false);
   const [choice1, setChoice1] = useState({});
   const [choice2, setChoice2] = useState({});
+  const [question, setQuestion] = useState({});
+  const [nextStep, setNextStep] = useState(false);
+
+  const dataQ = [
+    {
+      id: 0,
+      question: "Which champ do you prefere on top lane?",
+    },
+    {
+      id: 1,
+      question: "Which champ do you prefere on jungle?",
+    },
+    {
+      id: 2,
+      question: "Which champ do you prefere on mid lane?",
+    },
+    {
+      id: 3,
+      question: "Which champ do you prefere on bottom adc lane?",
+    },
+    {
+      id: 4,
+      question: "Which champ do you prefere on bottom support lane?",
+    },
+  ];
 
   async function getLOLChampionData() {
     await axios
       .get(CHAMPION_KEYS_URL)
       .then((response) => {
         setChampions(response.data.data);
+        setReload(true);
       })
       .catch((error) => {
         console.error("Error fetching data; ", error);
@@ -38,6 +64,10 @@ function App() {
   }, []);
 
   useEffect(() => {
+    setQuestion(dataQ[getRandomInt(dataQ.length)]);
+  }, []);
+
+  useEffect(() => {
     let keys = Object.keys(champions);
     if (keys.length === 0) {
       console.error("keys empty");
@@ -46,42 +76,71 @@ function App() {
 
     let randomChoice1 = getRandomInt(keys.length);
     let randomChoice2 = getRandomInt(keys.length);
-    console.log("1: " + randomChoice1 + ", 2: " + randomChoice2);
+    console.log("A: " + randomChoice1 + ", B: " + randomChoice2);
     while (randomChoice1 === randomChoice2) {
       randomChoice2 = getRandomInt(keys.length);
     }
 
     setChoice1(champions[keys[randomChoice1]]);
     setChoice2(champions[keys[randomChoice2]]);
-    setReload(false);
   }, [reload]);
+
+  function chooseChampion(champion) {
+    // cancel multiple reload before clicking on next button navigation
+    if (!nextStep) setNextStep(!nextStep);
+
+    // store champ/question data
+
+    // display results
+  }
+
+  function next() {
+    setReload(!reload);
+    setNextStep(!nextStep);
+  }
 
   return (
     <div className="app">
       <div className="champions">
-
-      <div className="champ_choice">
-        <div className="champ_left">
-          <div className="champ_image">
-            <img
-              src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, choice1?.key)}
-              alt="champion1"
+        <div className="champ_choice">
+          <div className="champ_left">
+            <div className="champ_image">
+              <img
+                src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, choice1?.key)}
+                alt="champion1"
               />
+            </div>
+            <button
+              onClick={() => chooseChampion(choice1)}
+              className="champion_name"
+            >
+              {choice1?.name}
+            </button>
           </div>
-          <button className="champion_name">{choice1?.name}</button>
+          <div className="champ_right">
+            <div className="champ_image">
+              <img
+                src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, choice2?.key)}
+                alt="champion2"
+              />
+            </div>
+            <button
+              onClick={() => chooseChampion(choice2)}
+              className="champion_name"
+            >
+              {choice2?.name}
+            </button>
+          </div>
         </div>
-        <div className="champ_right">
-          <div className="champ_image">
-            <img
-          src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, choice2?.key)}
-          alt="champion2" 
-          />
-          </div>
-          <button className="champion_name">{choice2?.name}</button>
+        <div className="nav">
+          {nextStep && (
+            <button className="next" onClick={() => next()}>
+              Next
+            </button>
+          )}
+          {!nextStep && <div className="question">{question.question}</div>}
         </div>
       </div>
-      <button className="next" onClick={() => setReload(true)}>Next</button>
-          </div>
     </div>
   );
 }

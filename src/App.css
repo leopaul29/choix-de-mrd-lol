@@ -14,22 +14,28 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: max-content;
 }
 .champ_right,
 .champ_left {
   position: relative;
 }
+.champ_right:hover,
+.champ_left:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
 .champion_name {
   position: absolute;
-  bottom: 35%;
+  bottom: 25%;
   right: 50%;
 }
 .champions {
   position: relative;
 }
-.next {
-  position: absolute;
-  bottom: 20%;
-  right: 50%;
+.nav {
+  display: flex;
+  justify-content: center;
+}
+.next{
+  width: 100px;
 }
