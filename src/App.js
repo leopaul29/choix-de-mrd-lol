@@ -3,13 +3,20 @@ import {
   ApolloProvider,
   InMemoryCache,
   HttpLink,
+  gql,
 } from "@apollo/client";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
 import { GRAPHQL_CONFIG } from "./graphql_variables.js";
-import { GET_ALL_QUESTIONS } from "./gqlQueries";
+import {
+  GET_ALL_QUESTIONS,
+  GET_QUESTION_CHAMPION_COUNT,
+  INSERT_CHAMPION,
+  INSERT_QUESTION_CHAMPION_COUNT,
+  UPDATE_QUESTION_CHAMPION_COUNT,
+} from "./gqlQueries";
 
 const createApolloClient = (authToken) => {
   return new ApolloClient({
@@ -41,41 +48,16 @@ function App() {
   const [reload, setReload] = useState(false);
   const [choice1, setChoice1] = useState({});
   const [choice2, setChoice2] = useState({});
+  const [finalChoice, setfinalChoice] = useState({});
   const [result1, setResult1] = useState("0%");
   const [result2, setResult2] = useState("0%");
   const [question, setQuestion] = useState({});
   const [questions, setQuestions] = useState([]);
   const [nextStep, setNextStep] = useState(false);
   const [client] = useState(createApolloClient(GRAPHQL_CONFIG));
+  const [state, setState] = useState({});
 
-  let dataQ = [
-    {
-      id: 0,
-      question: "Which champ do you prefere on top lane?",
-      champions: [],
-    } /*,
-    {
-      id: 1,
-      question: "Which champ do you prefere on jungle?",
-      champions: [],
-    }, 
-    {
-      id: 2,
-      question: "Which champ do you prefere on mid lane?",
-      champions: [],
-    },
-    {
-      id: 3,
-      question: "Which champ do you prefere on bottom adc lane?",
-      champions: [],
-    },
-    {
-      id: 4,
-      question: "Which champ do you prefere on bottom support lane?",
-      champions: [],
-    },*/,
-  ];
-
+  // --- Pre-set
   async function getLOLChampionData() {
     await axios
       .get(CHAMPION_KEYS_URL)
@@ -92,18 +74,18 @@ function App() {
   async function getQuestions() {
     await client.query({ query: GET_ALL_QUESTIONS }).then((response) => {
       setQuestions(response.data.question);
+      setQuestion(
+        response.data.question[getRandomInt(response.data.question.length)]
+      );
     });
   }
-
+  // On load
   useEffect(() => {
     getLOLChampionData();
     getQuestions();
   }, []);
 
-  useEffect(() => {
-    //    setQuestion(dataQ[getRandomInt(dataQ.length)]);
-  }, []);
-
+  // Setup champion data and random choice
   useEffect(() => {
     let keys = Object.keys(champions);
     keys = keys.slice(0, 2);
@@ -125,14 +107,92 @@ function App() {
     setQuestion(questions[getRandomInt(questions.length)]);
   }, [reload]);
 
-  function chooseChampion(champion) {
-    // cancel multiple reload before clicking on next button navigation
+  // --- Request part
+  // Get Question-champion
+  async function getQuestionChampionCount(
+    questionId,
+    champion1Name,
+    champion2Name
+  ) {
+    await client
+      .query({
+        query: GET_QUESTION_CHAMPION_COUNT,
+        variables: {
+          questionId: questionId,
+          championName: champion1Name,
+        },
+      })
+      .then((response) => {
+        setResult1(response.data.question_champion[0]?.count);
+      });
+    await client
+      .query({
+        query: GET_QUESTION_CHAMPION_COUNT,
+        variables: {
+          questionId: questionId,
+          championName: champion2Name,
+        },
+      })
+      .then((response) => {
+        setResult2(response.data.question_champion[0]?.count);
+      });
+  }
+  // Insert champion
+  async function insertChampionQuestion(questionId, championName) {
+    await client.mutate({
+      mutation: INSERT_CHAMPION(championName),
+    });
+    // .then((response) => {
+    //   if (response.errors) console.error(response.errors[0]?.message);
+    // });
+    await client.mutate({
+      mutation: INSERT_QUESTION_CHAMPION_COUNT,
+      variables: {
+        questionId: questionId,
+        championName: championName,
+      },
+    });
+  }
+  // Increment Count champion
+  async function incrementChampionCount(questionId, championName, newCount) {
+    await client.mutate({
+      mutation: UPDATE_QUESTION_CHAMPION_COUNT,
+      variables: {
+        questionId: questionId,
+        championName: championName,
+        newCount: newCount,
+      },
+    });
+    // .then((response) => {
+    //   if (response.errors) console.error(response.errors[0]?.message);
+    // });
+  }
+
+  // --- Execute
+  async function chooseChampion(champion) {
     if (!nextStep) setNextStep(!nextStep);
-    /*
-    // store champ/question data
-    const idQ = question.id;
-    const currentQ = dataQ[idQ];
-    // champion list not empty
+    // --- get data
+    const questionId = question.id;
+    const champion1Name = choice1.name;
+    const champion2Name = choice2.name;
+
+    // --- add both champ in db
+    await insertChampionQuestion(questionId, champion1Name);
+    await insertChampionQuestion(questionId, champion2Name);
+
+    // --- get both count
+    /*const countChampion1 = await getQuestionChampionCount(
+      questionId,
+      champion1Name
+    );
+    const countChampion2 = await getQuestionChampionCount(
+      questionId,
+      champion2Name
+    );*/
+    incrementChampionCount(questionId, champion.name, state.currentCount + 1);
+
+    getQuestionChampionCount(questionId, champion1Name, champion2Name);
+    /*    // champion list not empty
     if (currentQ?.champions?.length > 0) {
       // get current champions key list
       let championKeys = Object.keys(currentQ.champions);
@@ -156,7 +216,7 @@ function App() {
         count: 1,
       });
     }
-
+/*
     // display results
     console.log(dataQ);
     const total1 = dataQ[idQ].champions[choice1.name]?.count;
@@ -174,6 +234,8 @@ function App() {
       setResult1(percentRes1 + "%");
       setResult2(100 - percentRes1 + "%");
     }*/
+    /*setResult1("XX");
+    setResult2("YY");*/
   }
 
   function next(e) {
@@ -199,6 +261,7 @@ function App() {
               <button
                 onClick={() => chooseChampion(choice1)}
                 className="champion_name"
+                disabled={nextStep}
               >
                 {choice1?.name}
               </button>
@@ -214,6 +277,7 @@ function App() {
               <button
                 onClick={() => chooseChampion(choice2)}
                 className="champion_name"
+                disabled={nextStep}
               >
                 {choice2?.name}
               </button>
@@ -226,7 +290,9 @@ function App() {
                 Next
               </button>
             )}
-            {!nextStep && <div className="question">{question.question}</div>}
+            {!nextStep && question && (
+              <div className="question">{question.question}</div>
+            )}
           </div>
         </div>
       </div>
