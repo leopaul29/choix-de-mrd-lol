@@ -8,7 +8,6 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-import { GRAPHQL_CONFIG } from "./graphql_variables.js";
 import {
   GET_ALL_QUESTIONS,
   GET_CHAMPION,
@@ -27,12 +26,12 @@ const defaultOptions = {
   },
 };
 
-const createApolloClient = (authToken) => {
+const createApolloClient = () => {
   return new ApolloClient({
     link: new HttpLink({
-      uri: authToken.url,
+      uri: process.env.GRAPHQL_CONFIG_URL,
       headers: {
-        "x-hasura-admin-secret": authToken.secret,
+        "x-hasura-admin-secret": process.env.GRAPHQL_CONFIG_SECRET,
       },
     }),
     cache: new InMemoryCache(),
@@ -63,7 +62,8 @@ function App() {
   const [question, setQuestion] = useState({});
   const [questions, setQuestions] = useState([]);
   const [nextStep, setNextStep] = useState(false);
-  const [client] = useState(createApolloClient(GRAPHQL_CONFIG));
+  // const [client] = useState(createApolloClient(GRAPHQL_CONFIG));
+  const [client] = useState(createApolloClient());
   const [loading, setLoading] = useState(false);
 
   // --- Pre-set
@@ -126,7 +126,7 @@ function App() {
         variables: { championName: championName },
       })
       .then((response) => {
-        console.log(response)
+        console.log(response);
         // add a new champ if not exist
         if (response.data.champion?.length === 0) {
           client.mutate({
