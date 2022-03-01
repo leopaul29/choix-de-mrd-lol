@@ -40,7 +40,7 @@ const createApolloClient = () => {
 };
 
 const CHAMPION_KEYS_URL =
-  "http://ddragon.leagueoflegends.com/cdn/9.3.1/data/en_US/champion.json";
+  "https://ddragon.leagueoflegends.com/cdn/9.3.1/data/en_US/champion.json";
 const PATCH_VERSION = "9.3.1";
 const CHAMPION_PORTRAIT_URL = (patch, championKey) => {
   if (patch && championKey)
