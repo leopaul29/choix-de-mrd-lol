@@ -23,4 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # graphql config
-src/graphql_variables.js
+#src/graphql_variables.js

@@ -16,6 +16,7 @@ import {
   INSERT_QUESTION_CHAMPION_COUNT,
   UPDATE_QUESTION_CHAMPION_COUNT,
 } from "./gqlQueries";
+import { GRAPHQL_CONFIG } from "./graphql_variables.js";
 
 const defaultOptions = {
   watchQuery: {
@@ -29,7 +30,7 @@ const defaultOptions = {
 const createApolloClient = () => {
   return new ApolloClient({
     link: new HttpLink({
-      uri: process.env.GRAPHQL_CONFIG_URL,
+      uri: GRAPHQL_CONFIG.url,
       headers: {
         "x-hasura-admin-secret": process.env.GRAPHQL_CONFIG_SECRET,
       },
