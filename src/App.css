@@ -39,3 +39,7 @@
 .next{
   width: 100px;
 }
+.result{
+  text-align: center;
+  font-size: 24px;
+}
