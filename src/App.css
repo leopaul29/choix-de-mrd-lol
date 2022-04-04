@@ -9,37 +9,3 @@
   justify-content: center;
   align-items: center;
 }
-.champ_choice {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-.champ_right,
-.champ_left {
-  position: relative;
-}
-.champ_right:hover,
-.champ_left:hover {
-  opacity: 0.8;
-  cursor: pointer;
-}
-.champion_name {
-  position: absolute;
-  bottom: 25%;
-  right: 50%;
-}
-.champions {
-  position: relative;
-}
-.nav {
-  display: flex;
-  justify-content: center;
-}
-.next{
-  width: 100px;
-}
-.result{
-  text-align: center;
-  font-size: 24px;
-}

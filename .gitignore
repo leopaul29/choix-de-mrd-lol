@@ -24,3 +24,6 @@ yarn-error.log*
 
 # graphql config
 #src/graphql_variables.js
+
+# Local Netlify folder
+.netlify
