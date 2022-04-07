@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Champion from "./Champion";
 import Nav from "./Nav";
+import axios from "axios";
 import "./Strawpoll.css";
+
+import { GET_ALL_STRAWPOLL } from "./../queries";
 
 const PATCH_VERSION = "9.3.1";
 const CHAMPION_KEYS_URL = `https://ddragon.leagueoflegends.com/cdn/${PATCH_VERSION}/data/en_US/champion.json`;
@@ -15,7 +18,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-const Strawpoll = () => {
+const Strawpoll = (client) => {
   const [champions, setChampions] = useState([]);
   const [reload, setReload] = useState(false);
   const [left, setLeft] = useState({});
@@ -24,6 +27,8 @@ const Strawpoll = () => {
   const [result2, setResult2] = useState("0%");
   const [loading, setLoading] = useState(false);
   const [nextStep, setNextStep] = useState(false);
+  const [strawpolls, setStrawpolls] = useState([]);
+  const [strawpoll, setStrawpoll] = useState([]);
 
   // --- Pre-set
   async function getLOLChampionData() {
@@ -39,9 +44,19 @@ const Strawpoll = () => {
       });
   }
 
+  async function getAllStrawpolls() {
+    await client.query({ query: GET_ALL_STRAWPOLL }).then((response) => {
+      setStrawpolls(response.data.strawpoll);
+      setStrawpoll(
+        response.data.strawpoll[getRandomInt(response.data.strawpoll.length)]
+      );
+    });
+  }
+
   // On load
   useEffect(() => {
     getLOLChampionData();
+    getAllStrawpolls();
   }, []);
 
   // Setup champion data and random choice
@@ -52,6 +67,8 @@ const Strawpoll = () => {
       console.error("keys empty");
       return;
     }
+
+    //let leftChampion =
     let randomChoice1 = getRandomInt(keys.length);
     let randomChoice2 = getRandomInt(keys.length);
     console.log("A: " + randomChoice1 + ", B: " + randomChoice2);
@@ -59,10 +76,25 @@ const Strawpoll = () => {
       randomChoice2 = getRandomInt(keys.length);
     }
 
-    setLeft(champions[keys[randomChoice1]]);
-    setRight(champions[keys[randomChoice2]]);
+    setLeft({
+      champData: champions[keys[randomChoice1]],
+      imgsrc: CHAMPION_PORTRAIT_URL(
+        PATCH_VERSION,
+        champions[keys[randomChoice1]]?.key
+      ),
+      champName: champions[keys[randomChoice1]]?.name,
+    });
 
-    setQuestion(questions[getRandomInt(questions.length)]);
+    setRight({
+      champData: champions[keys[randomChoice2]],
+      imgsrc: CHAMPION_PORTRAIT_URL(
+        PATCH_VERSION,
+        champions[keys[randomChoice2]]?.key
+      ),
+      champName: champions[keys[randomChoice2]]?.name,
+    });
+
+    //setQuestion(questions[getRandomInt(questions.length)]);
   }, [reload]);
 
   return (
@@ -74,7 +106,6 @@ const Strawpoll = () => {
           nextStep={nextStep}
           setNextStep={setNextStep}
           setLoading={setLoading}
-          CHAMPION_PORTRAIT_URL={CHAMPION_PORTRAIT_URL}
         />
         <Champion
           champion={right}
@@ -82,7 +113,6 @@ const Strawpoll = () => {
           nextStep={nextStep}
           setNextStep={setNextStep}
           setLoading={setLoading}
-          CHAMPION_PORTRAIT_URL={CHAMPION_PORTRAIT_URL}
         />
       </div>
       <Nav loading={loading} />

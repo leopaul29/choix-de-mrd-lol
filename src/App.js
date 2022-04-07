@@ -4,19 +4,9 @@ import {
   InMemoryCache,
   HttpLink,
 } from "@apollo/client";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import "./App.css";
+import React, { useState } from "react";
 import Strawpoll from "./components/Strawpoll";
-
-import {
-  GET_ALL_QUESTIONS,
-  GET_CHAMPION,
-  GET_QUESTION_CHAMPION_COUNT,
-  INSERT_CHAMPION,
-  INSERT_QUESTION_CHAMPION_COUNT,
-  UPDATE_QUESTION_CHAMPION_COUNT,
-} from "./queries";
+import "./App.css";
 
 const defaultOptions = {
   watchQuery: {
@@ -46,7 +36,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <div className="app">
-        <Strawpoll />
+        <Strawpoll client={client} />
       </div>
     </ApolloProvider>
   );

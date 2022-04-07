@@ -4,15 +4,15 @@ import "./Nav.css";
 const Nav = () => {
   function next(e) {
     e.preventDefault();
-    setReload(!reload);
-    setNextStep(!nextStep);
-    setResult1("");
-    setResult2("");
+    //setReload(!reload);
+    //setNextStep(!nextStep);
+    //setResult1("");
+    //setResult2("");
   }
 
   return (
     <div className="nav">
-      {nextStep && (
+      {/* {nextStep && (
         <button
           className="next"
           onClick={(event) => next(event)}
@@ -23,7 +23,7 @@ const Nav = () => {
       )}
       {!nextStep && question && (
         <div className="question">{question.question}</div>
-      )}
+      )} */}
     </div>
   );
 };

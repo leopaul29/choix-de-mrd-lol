@@ -1,14 +1,9 @@
 import React from "react";
 import "./Champion.css";
 
-const Champion = ({
-  champion,
-  result,
-  nextStep,
-  setNextStep,
-  setLoading,
-  CHAMPION_PORTRAIT_URL,
-}) => {
+const Champion = ({ champion, result, nextStep, setNextStep, setLoading }) => {
+  const { champData, imgsrc, champName } = champion;
+
   // --- Execute
   async function chooseChampion(champion, setLoading) {
     setLoading(true);
@@ -21,17 +16,14 @@ const Champion = ({
   return (
     <div className="champion">
       <div className="champion_image">
-        <img
-          src={CHAMPION_PORTRAIT_URL(PATCH_VERSION, champion?.key)}
-          alt={champion?.name}
-        />
+        <img src={imgsrc} alt={champName} />
       </div>
       <button
-        onClick={() => chooseChampion(champion, setLoading)}
+        onClick={() => chooseChampion(champData, setLoading)}
         className="champion_name"
         disabled={nextStep}
       >
-        {champion?.name}
+        {champName}
       </button>
       {nextStep && <div className="result">{result}</div>}
     </div>

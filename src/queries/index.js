@@ -87,3 +87,16 @@ export const UPDATE_QUESTION_CHAMPION_COUNT = gql`
     }
   }
 `;
+
+export const GET_ALL_STRAWPOLL = gql`
+  query getAllStrawpoll {
+    strawpoll {
+      id
+      left
+      right
+      question
+      left_counter
+      right_counter
+    }
+  }
+`;
