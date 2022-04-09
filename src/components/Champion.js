@@ -1,16 +1,16 @@
 import React from "react";
 import "./Champion.css";
 
-const Champion = ({ champion, result, nextStep, setNextStep, setLoading }) => {
+const Champion = ({ champion, result, nextStep, setNextStep, setLoading, setReload }) => {
   const { champData, imgsrc, champName } = champion;
 
   // --- Execute
-  async function chooseChampion(champion, setLoading) {
-    setLoading(true);
-    if (!nextStep) setNextStep(!nextStep);
-    // --- get data
+  async function validateChampion(champion, setLoading) {
+    // setLoading(true);
+     if (!nextStep) setNextStep(!nextStep);
+    // // --- get data
 
-    setLoading(false);
+    // setLoading(false);
   }
 
   return (
@@ -19,7 +19,7 @@ const Champion = ({ champion, result, nextStep, setNextStep, setLoading }) => {
         <img src={imgsrc} alt={champName} />
       </div>
       <button
-        onClick={() => chooseChampion(champData, setLoading)}
+        onClick={() => validateChampion(champData, setLoading)}
         className="champion_name"
         disabled={nextStep}
       >

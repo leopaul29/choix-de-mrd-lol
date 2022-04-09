@@ -1,18 +1,18 @@
 import React from "react";
 import "./Nav.css";
 
-const Nav = () => {
+const Nav = ({ question, setResult1, setResult2, nextStep, setNextStep, loading, setReload, reload }) => {
   function next(e) {
     e.preventDefault();
-    //setReload(!reload);
-    //setNextStep(!nextStep);
-    //setResult1("");
-    //setResult2("");
+    setReload(!reload);
+    setNextStep(!nextStep);
+    setResult1("");
+    setResult2("");
   }
 
   return (
     <div className="nav">
-      {/* {nextStep && (
+      {nextStep && (
         <button
           className="next"
           onClick={(event) => next(event)}
@@ -21,9 +21,7 @@ const Nav = () => {
           Next
         </button>
       )}
-      {!nextStep && question && (
-        <div className="question">{question.question}</div>
-      )} */}
+      {!nextStep && question && <div className="question">{question}</div>}
     </div>
   );
 };

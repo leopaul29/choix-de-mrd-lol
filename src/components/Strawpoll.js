@@ -18,7 +18,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-const Strawpoll = (client) => {
+const Strawpoll = ({ client }) => {
   const [champions, setChampions] = useState([]);
   const [reload, setReload] = useState(false);
   const [left, setLeft] = useState({});
@@ -28,7 +28,7 @@ const Strawpoll = (client) => {
   const [loading, setLoading] = useState(false);
   const [nextStep, setNextStep] = useState(false);
   const [strawpolls, setStrawpolls] = useState([]);
-  const [strawpoll, setStrawpoll] = useState([]);
+  const [strawpoll, setStrawpoll] = useState();
 
   // --- Pre-set
   async function getLOLChampionData() {
@@ -68,33 +68,26 @@ const Strawpoll = (client) => {
       return;
     }
 
-    //let leftChampion =
-    let randomChoice1 = getRandomInt(keys.length);
-    let randomChoice2 = getRandomInt(keys.length);
-    console.log("A: " + randomChoice1 + ", B: " + randomChoice2);
-    while (randomChoice1 === randomChoice2) {
-      randomChoice2 = getRandomInt(keys.length);
-    }
+    let leftChampion = champions[strawpoll.left];
+    let rightChampion = champions[strawpoll.right];
 
     setLeft({
-      champData: champions[keys[randomChoice1]],
-      imgsrc: CHAMPION_PORTRAIT_URL(
-        PATCH_VERSION,
-        champions[keys[randomChoice1]]?.key
-      ),
-      champName: champions[keys[randomChoice1]]?.name,
+      champData: leftChampion,
+      imgsrc: CHAMPION_PORTRAIT_URL(PATCH_VERSION, leftChampion?.key),
+      champName: leftChampion?.name,
     });
 
     setRight({
-      champData: champions[keys[randomChoice2]],
-      imgsrc: CHAMPION_PORTRAIT_URL(
-        PATCH_VERSION,
-        champions[keys[randomChoice2]]?.key
-      ),
-      champName: champions[keys[randomChoice2]]?.name,
+      champData: rightChampion,
+      imgsrc: CHAMPION_PORTRAIT_URL(PATCH_VERSION, rightChampion?.key),
+      champName: rightChampion?.name,
     });
+  }, [strawpoll]);
 
-    //setQuestion(questions[getRandomInt(questions.length)]);
+  useEffect(() => {
+    if (strawpolls) {
+      setStrawpoll(strawpolls[getRandomInt(strawpolls.length)]);
+    }
   }, [reload]);
 
   return (
@@ -106,6 +99,7 @@ const Strawpoll = (client) => {
           nextStep={nextStep}
           setNextStep={setNextStep}
           setLoading={setLoading}
+          setReload={setReload}
         />
         <Champion
           champion={right}
@@ -113,9 +107,19 @@ const Strawpoll = (client) => {
           nextStep={nextStep}
           setNextStep={setNextStep}
           setLoading={setLoading}
+          setReload={setReload}
         />
       </div>
-      <Nav loading={loading} />
+      <Nav
+        loading={loading}
+        question={strawpoll?.question}
+        setResult1={setResult1}
+        setResult2={setResult2}
+        nextStep={nextStep}
+        setNextStep={setNextStep}
+        setReload={setReload}
+        reload={reload}
+      />
     </div>
   );
 };
