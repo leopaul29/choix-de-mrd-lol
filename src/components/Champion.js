@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Champion.css";
 
 import { INCREMENT_LEFT, INCREMENT_RIGHT } from "./../queries";
@@ -14,10 +14,21 @@ const Champion = ({
   const { imgsrc, champName } = champion;
 
   const [result, setResult] = useState("0");
-  // --- Execute
+
+  useEffect(() => {
+    if (strawpoll) {
+      if (side === "left") {
+        setResult(strawpoll.left_counter);
+      } else {
+        setResult(strawpoll.right_counter);
+      }
+    }
+  }, [strawpoll]);
+
   async function validateChampion() {
     if (!nextStep) {
       if (side === "left") {
+        setResult(strawpoll.left_counter + 1);
         client
           .query({
             query: INCREMENT_LEFT,
