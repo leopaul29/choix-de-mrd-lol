@@ -1,16 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Champion.css";
 
-const Champion = ({ champion, result, nextStep, setNextStep, setLoading, setReload }) => {
-  const { champData, imgsrc, champName } = champion;
+import { INCREMENT_LEFT, INCREMENT_RIGHT } from "./../queries";
 
+const Champion = ({
+  champion,
+  side,
+  client,
+  nextStep,
+  setNextStep,
+  strawpoll,
+}) => {
+  const { imgsrc, champName } = champion;
+
+  const [result, setResult] = useState("0");
   // --- Execute
-  async function validateChampion(champion, setLoading) {
-    // setLoading(true);
-     if (!nextStep) setNextStep(!nextStep);
-    // // --- get data
-
-    // setLoading(false);
+  async function validateChampion() {
+    if (!nextStep) {
+      if (side === "left") {
+        client
+          .query({
+            query: INCREMENT_LEFT,
+            variables: { id: strawpoll.id },
+          })
+          .then((response) => {
+            setResult(response.data.update_strawpoll_by_pk?.left_counter);
+          });
+      } else {
+        setResult(strawpoll.right_counter + 1);
+        client
+          .query({
+            query: INCREMENT_RIGHT,
+            variables: { id: strawpoll.id },
+          })
+          .then((response) => {
+            setResult(response.data.update_strawpoll_by_pk?.right_counter);
+          });
+      }
+      setNextStep(!nextStep);
+    } else {
+      setResult("");
+    }
   }
 
   return (
@@ -19,7 +49,7 @@ const Champion = ({ champion, result, nextStep, setNextStep, setLoading, setRelo
         <img src={imgsrc} alt={champName} />
       </div>
       <button
-        onClick={() => validateChampion(champData, setLoading)}
+        onClick={() => validateChampion()}
         className="champion_name"
         disabled={nextStep}
       >

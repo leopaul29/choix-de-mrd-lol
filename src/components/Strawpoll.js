@@ -23,8 +23,6 @@ const Strawpoll = ({ client }) => {
   const [reload, setReload] = useState(false);
   const [left, setLeft] = useState({});
   const [right, setRight] = useState({});
-  const [result1, setResult1] = useState("0%");
-  const [result2, setResult2] = useState("0%");
   const [loading, setLoading] = useState(false);
   const [nextStep, setNextStep] = useState(false);
   const [strawpolls, setStrawpolls] = useState([]);
@@ -72,13 +70,11 @@ const Strawpoll = ({ client }) => {
     let rightChampion = champions[strawpoll.right];
 
     setLeft({
-      champData: leftChampion,
       imgsrc: CHAMPION_PORTRAIT_URL(PATCH_VERSION, leftChampion?.key),
       champName: leftChampion?.name,
     });
 
     setRight({
-      champData: rightChampion,
       imgsrc: CHAMPION_PORTRAIT_URL(PATCH_VERSION, rightChampion?.key),
       champName: rightChampion?.name,
     });
@@ -95,26 +91,24 @@ const Strawpoll = ({ client }) => {
       <div className="champion_choice">
         <Champion
           champion={left}
-          result={result1}
+          side="left"
+          strawpoll={strawpoll}
+          client={client}
           nextStep={nextStep}
           setNextStep={setNextStep}
-          setLoading={setLoading}
-          setReload={setReload}
         />
         <Champion
           champion={right}
-          result={result2}
+          side="right"
+          strawpoll={strawpoll}
+          client={client}
           nextStep={nextStep}
           setNextStep={setNextStep}
-          setLoading={setLoading}
-          setReload={setReload}
         />
       </div>
       <Nav
         loading={loading}
         question={strawpoll?.question}
-        setResult1={setResult1}
-        setResult2={setResult2}
         nextStep={nextStep}
         setNextStep={setNextStep}
         setReload={setReload}

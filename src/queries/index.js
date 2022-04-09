@@ -100,3 +100,24 @@ export const GET_ALL_STRAWPOLL = gql`
     }
   }
 `;
+
+export const INCREMENT_LEFT = gql`
+  mutation incrementLeft($id: Int!) {
+    update_strawpoll_by_pk(pk_columns: { id: $id }, _inc: { left_counter: 1 }) {
+      id
+      left_counter
+    }
+  }
+`;
+
+export const INCREMENT_RIGHT = gql`
+  mutation incrementRight($id: Int!) {
+    update_strawpoll_by_pk(
+      pk_columns: { id: $id }
+      _inc: { right_counter: 1 }
+    ) {
+      id
+      right_counter
+    }
+  }
+`;
