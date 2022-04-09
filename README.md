@@ -1,4 +1,16 @@
+# Hashnode Hackathon with Netlify
+* [Hashnode post](https://townhall.hashnode.com/netlify-hackathon)
+* [My blog post](https://lpm.hashnode.dev/netlify-x-hashnode-hackathon)
+
+
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ef31087c-af65-45ba-9295-336a01100eb2/deploy-status)](https://app.netlify.com/sites/agitated-hugle-1d7ba4/deploys)
+### How to improve?
+* Get the champions, stats and items list to compare [here](http://ddragon.leagueoflegends.com/cdn/9.3.1/data/en_US/champion.json)
+* Find interesting question thanks to this magnific adjectiv list [here](https://www.ispeakspokespoken.com/adjectifs-anglais/)
+* Make a progress bar with percentage
+* Having more than 2 choices available
+* etc...
+
 
 # Getting Started with Create React App
 
